@@ -12,9 +12,11 @@ public func configure(_ app: Application) async throws {
 
   /// Configure migrations
   app.migrations.add(CreatePokemon())
+  //Кэшированные значения сохраняются между перезапусками приложений.
+  app.migrations.add(CacheEntry.migration)
   
   try await app.autoMigrate().get()
-
+  app.caches.use(.fluent)
   /// Register routes
   try routes(app)
 }
