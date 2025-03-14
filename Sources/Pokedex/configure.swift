@@ -5,13 +5,16 @@ import Vapor
 
 // configures your application
 public func configure(_ app: Application) async throws {
-  
     // uncomment to serve files from /Public folder
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+  /// Setup a simple in-memory SQLite database
+  app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
 
-    app.databases.use(DatabaseConfigurationFactory.sqlite(.file("db.sqlite")), as: .sqlite)
+  /// Configure migrations
+  app.migrations.add(CreatePokemon())
+  
+  try await app.autoMigrate().get()
 
-    app.migrations.add(CreateTodo())
-    // register routes
-    try routes(app)
+  /// Register routes
+  try routes(app)
 }
